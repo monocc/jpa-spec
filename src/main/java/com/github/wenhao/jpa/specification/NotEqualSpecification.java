@@ -26,20 +26,31 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.lang.reflect.Field;
+import java.util.List;
 
 public class NotEqualSpecification<T> extends AbstractSpecification<T> {
-    private final String property;
     private final transient Object[] values;
 
     public NotEqualSpecification(String property, Object... values) {
-        this.property = property;
+        super(property);
+        this.values = values;
+    }
+
+    public NotEqualSpecification(Field field, Object... values) {
+        super(field);
+        this.values = values;
+    }
+
+    public NotEqualSpecification(List<Field> fields, Object... values) {
+        super(fields);
         this.values = values;
     }
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        From from = getRoot(property, root);
-        String field = getProperty(property);
+        From from = getRoot(root);
+        String field = getProperty();
         if (values == null) {
             return cb.isNotNull(from.get(field));
         }

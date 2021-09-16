@@ -21,38 +21,16 @@
  */
 package com.github.wenhao.jpa;
 
-import com.github.wenhao.jpa.specification.BetweenSpecification;
-import com.github.wenhao.jpa.specification.EqualSpecification;
-import com.github.wenhao.jpa.specification.GeSpecification;
-import com.github.wenhao.jpa.specification.GtSpecification;
-import com.github.wenhao.jpa.specification.InSpecification;
-import com.github.wenhao.jpa.specification.LeSpecification;
-import com.github.wenhao.jpa.specification.LikeSpecification;
-import com.github.wenhao.jpa.specification.LtSpecification;
-import com.github.wenhao.jpa.specification.NotEqualSpecification;
-import com.github.wenhao.jpa.specification.NotInSpecification;
-import com.github.wenhao.jpa.specification.NotLikeSpecification;
-import static javax.persistence.criteria.Predicate.BooleanOperator.OR;
-import org.springframework.data.jpa.domain.Specification;
+import com.github.wenhao.jpa.specification.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
 
-public class PredicateBuilder<T> {
+public class PredicateBuilder<T> extends AbstractPredicateBuilder<T>{
 
-    private final Predicate.BooleanOperator operator;
-
-    private List<Specification<T>> specifications;
 
     public PredicateBuilder(Predicate.BooleanOperator operator) {
-        this.operator = operator;
-        this.specifications = new ArrayList<>();
+        super(operator);
     }
 
     public PredicateBuilder<T> eq(String property, Object... values) {
@@ -143,27 +121,9 @@ public class PredicateBuilder<T> {
         return this.predicate(condition, new NotInSpecification<T>(property, values));
     }
 
-    public PredicateBuilder<T> predicate(Specification specification) {
-        return predicate(true, specification);
+
+    public LambdaPredicateBuilder<T>  lambda() {
+        return new LambdaPredicateBuilder<>(this);
     }
 
-    public PredicateBuilder<T> predicate(boolean condition, Specification specification) {
-        if (condition) {
-            this.specifications.add(specification);
-        }
-        return this;
-    }
-
-    public Specification<T> build() {
-        return (Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
-            Predicate[] predicates = new Predicate[specifications.size()];
-            for (int i = 0; i < specifications.size(); i++) {
-                predicates[i] = specifications.get(i).toPredicate(root, query, cb);
-            }
-            if (Objects.equals(predicates.length, 0)) {
-                return null;
-            }
-            return OR.equals(operator) ? cb.or(predicates) : cb.and(predicates);
-        };
-    }
 }

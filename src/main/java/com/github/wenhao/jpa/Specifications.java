@@ -21,6 +21,8 @@
  */
 package com.github.wenhao.jpa;
 
+import com.github.wenhao.lambda.CascadeField;
+
 import static javax.persistence.criteria.Predicate.BooleanOperator.AND;
 import static javax.persistence.criteria.Predicate.BooleanOperator.OR;
 

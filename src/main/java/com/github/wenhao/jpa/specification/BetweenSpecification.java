@@ -22,28 +22,45 @@
 package com.github.wenhao.jpa.specification;
 
 
+import com.github.wenhao.lambda.CascadeField;
+import com.github.wenhao.lambda.LambdaUtils;
+import com.github.wenhao.lambda.SerializableFunction;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.lang.reflect.Field;
+import java.util.List;
 
 
 public class BetweenSpecification<T> extends AbstractSpecification<T> {
-    private final String property;
     private final transient Comparable<Object> lower;
     private final transient Comparable<Object> upper;
 
     public BetweenSpecification(String property, Object lower, Object upper) {
-        this.property = property;
+        super(property);
+        this.lower = (Comparable<Object>) lower;
+        this.upper = (Comparable<Object>) upper;
+    }
+
+    public BetweenSpecification(Field field, Object lower, Object upper) {
+        super(field);
+        this.lower = (Comparable<Object>) lower;
+        this.upper = (Comparable<Object>) upper;
+    }
+
+    public BetweenSpecification(List<Field> fields, Object lower, Object upper) {
+        super(fields);
         this.lower = (Comparable<Object>) lower;
         this.upper = (Comparable<Object>) upper;
     }
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        From from = getRoot(property, root);
-        String field = getProperty(property);
+        From from = getRoot(root);
+        String field = getProperty();
         return cb.between(from.get(field), lower, upper);
     }
 }

@@ -26,21 +26,32 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.List;
 
 public class InSpecification<T> extends AbstractSpecification<T> {
-    private final String property;
     private final transient Collection<?> values;
 
     public InSpecification(String property, Collection<?> values) {
-        this.property = property;
+        super(property);
+        this.values = values;
+    }
+
+    public InSpecification(Field field, Collection<?> values) {
+        super(field);
+        this.values = values;
+    }
+
+    public InSpecification(List<Field> fields, Collection<?> values) {
+        super(fields);
         this.values = values;
     }
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        From from = getRoot(property, root);
-        String field = getProperty(property);
+        From from = getRoot(root);
+        String field = getProperty();
         return from.get(field).in(values);
     }
 }

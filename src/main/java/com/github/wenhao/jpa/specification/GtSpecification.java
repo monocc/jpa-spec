@@ -26,20 +26,29 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.lang.reflect.Field;
+import java.util.List;
 
 public class GtSpecification<T> extends AbstractSpecification<T> {
-    private final String property;
     private final transient Comparable<Object> compare;
 
     public GtSpecification(String property, Comparable<? extends Object> compare) {
-        this.property = property;
+        super(property);
+        this.compare = (Comparable<Object>) compare;
+    }
+    public GtSpecification(Field field, Comparable<? extends Object> compare) {
+        super(field);
+        this.compare = (Comparable<Object>) compare;
+    }
+    public GtSpecification(List<Field> fields, Comparable<? extends Object> compare) {
+        super(fields);
         this.compare = (Comparable<Object>) compare;
     }
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        From from = getRoot(property, root);
-        String field = getProperty(property);
+        From from = getRoot(root);
+        String field = getProperty();
         return cb.greaterThan(from.get(field), compare);
     }
 }
