@@ -28,29 +28,38 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class GeSpecification<T> extends AbstractSpecification<T> {
-    private final transient Comparable<Object> compare;
+public class GeSpecification<T> extends CompareSpecification<T> {
 
-    public GeSpecification(String property, Comparable<? extends Object> compare) {
-        super(property);
-        this.compare = (Comparable<Object>) compare;
+    public GeSpecification(String property, Comparable<?> compare) {
+        super(property, compare);
     }
 
-    public GeSpecification(Field field, Comparable<? extends Object> compare) {
-        super(field);
-        this.compare = (Comparable<Object>) compare;
+    public GeSpecification(Field field, Comparable<?> compare) {
+        super(field, compare);
     }
 
-    public GeSpecification(List<Field> fields, Comparable<? extends Object> compare) {
-        super(fields);
-        this.compare = (Comparable<Object>) compare;
+    public GeSpecification(List<Field> fields, Comparable<?> compare) {
+        super(fields, compare);
+    }
+
+    public GeSpecification(String property, Supplier<Comparable<?>> compareSupplier) {
+        super(property, compareSupplier);
+    }
+
+    public GeSpecification(Field field, Supplier<Comparable<?>> compareSupplier) {
+        super(field, compareSupplier);
+    }
+
+    public GeSpecification(List<Field> fields, Supplier<Comparable<?>> compareSupplier) {
+        super(fields, compareSupplier);
     }
 
     @Override
-    public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        From from = getRoot(root);
-        String field = getProperty();
-        return cb.greaterThanOrEqualTo(from.get(field), compare);
+    protected Predicate doToPredicate(From root, CriteriaBuilder cb, String field, Comparable<Object> compare) {
+        return cb.greaterThanOrEqualTo(root.get(field), compare);
     }
+
+
 }

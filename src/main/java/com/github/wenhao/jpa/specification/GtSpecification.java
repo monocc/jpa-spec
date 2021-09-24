@@ -28,27 +28,36 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class GtSpecification<T> extends AbstractSpecification<T> {
-    private final transient Comparable<Object> compare;
+public class GtSpecification<T> extends CompareSpecification<T> {
 
-    public GtSpecification(String property, Comparable<? extends Object> compare) {
-        super(property);
-        this.compare = (Comparable<Object>) compare;
+    public GtSpecification(String property, Comparable<?> compare) {
+        super(property, compare);
     }
-    public GtSpecification(Field field, Comparable<? extends Object> compare) {
-        super(field);
-        this.compare = (Comparable<Object>) compare;
+
+    public GtSpecification(Field field, Comparable<?> compare) {
+        super(field, compare);
     }
-    public GtSpecification(List<Field> fields, Comparable<? extends Object> compare) {
-        super(fields);
-        this.compare = (Comparable<Object>) compare;
+
+    public GtSpecification(List<Field> fields, Comparable<?> compare) {
+        super(fields, compare);
+    }
+
+    public GtSpecification(String property, Supplier<Comparable<?>> compareSupplier) {
+        super(property, compareSupplier);
+    }
+
+    public GtSpecification(Field field, Supplier<Comparable<?>> compareSupplier) {
+        super(field, compareSupplier);
+    }
+
+    public GtSpecification(List<Field> fields, Supplier<Comparable<?>> compareSupplier) {
+        super(fields, compareSupplier);
     }
 
     @Override
-    public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        From from = getRoot(root);
-        String field = getProperty();
-        return cb.greaterThan(from.get(field), compare);
+    protected Predicate doToPredicate(From root, CriteriaBuilder cb, String field, Comparable<Object> compare) {
+        return cb.greaterThan(root.get(field), compare);
     }
 }

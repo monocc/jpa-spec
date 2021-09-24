@@ -28,43 +28,37 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class NotEqualSpecification<T> extends AbstractSpecification<T> {
-    private final transient Object[] values;
+public class NotEqualSpecification<T> extends ValuesSpecification<T> {
 
     public NotEqualSpecification(String property, Object... values) {
-        super(property);
-        this.values = values;
+        super(property, values);
     }
 
     public NotEqualSpecification(Field field, Object... values) {
-        super(field);
-        this.values = values;
+        super(field, values);
     }
 
     public NotEqualSpecification(List<Field> fields, Object... values) {
-        super(fields);
-        this.values = values;
+        super(fields, values);
     }
+
+    public NotEqualSpecification(String property, Supplier<Object>... suppliers) {
+        super(property, suppliers);
+    }
+
+    public NotEqualSpecification(Field field, Supplier<Object>... suppliers) {
+        super(field, suppliers);
+    }
+
+    public NotEqualSpecification(List<Field> fields, Supplier<Object>... suppliers) {
+        super(fields, suppliers);
+    }
+
 
     @Override
-    public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        From from = getRoot(root);
-        String field = getProperty();
-        if (values == null) {
-            return cb.isNotNull(from.get(field));
-        }
-        if (values.length == 1) {
-            return getPredicate(from, cb, values[0], field);
-        }
-        Predicate[] predicates = new Predicate[values.length];
-        for (int i = 0; i < values.length; i++) {
-            predicates[i] = getPredicate(root, cb, values[i], field);
-        }
-        return cb.or(predicates);
-    }
-
-    private Predicate getPredicate(From root, CriteriaBuilder cb, Object value, String field) {
+    protected Predicate doToPredicate(From root, CriteriaBuilder cb, Object value, String field) {
         return value == null ? cb.isNotNull(root.get(field)) : cb.notEqual(root.get(field), value);
     }
 }

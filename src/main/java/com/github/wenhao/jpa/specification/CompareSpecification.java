@@ -21,53 +21,55 @@
  */
 package com.github.wenhao.jpa.specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.lang.reflect.Field;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class InSpecification<T> extends AbstractSpecification<T> {
-    private final transient Collection<?> values;
+public abstract class CompareSpecification<T> extends AbstractSpecification<T> {
+    private final transient Comparable<Object> compare;
 
-    public InSpecification(String property, Collection<?> values) {
+    public CompareSpecification(String property, Comparable<? extends Object> compare) {
         super(property);
-        this.values = values;
+        this.compare = (Comparable<Object>) compare;
     }
 
-    public InSpecification(Field field, Collection<?> values) {
+    public CompareSpecification(Field field, Comparable<? extends Object> compare) {
         super(field);
-        this.values = values;
+        this.compare = (Comparable<Object>) compare;
     }
 
-    public InSpecification(List<Field> fields, Collection<?> values) {
+    public CompareSpecification(List<Field> fields, Comparable<? extends Object> compare) {
         super(fields);
-        this.values = values;
+        this.compare = (Comparable<Object>) compare;
     }
 
-    public InSpecification(String property, Supplier<Collection<?>> supplier) {
+    public CompareSpecification(String property, Supplier<Comparable<? extends Object>> compareSupplier) {
         super(property);
-        this.values = supplier.get();
+        this.compare = (Comparable<Object>) compareSupplier.get();
     }
 
-    public InSpecification(Field field, Supplier<Collection<?>> supplier) {
+    public CompareSpecification(Field field, Supplier<Comparable<? extends Object>> compareSupplier) {
         super(field);
-        this.values = supplier.get();
+        this.compare = (Comparable<Object>) compareSupplier.get();
     }
 
-    public InSpecification(List<Field> fields, Supplier<Collection<?>> supplier) {
+    public CompareSpecification(List<Field> fields, Supplier<Comparable<? extends Object>> compareSupplier) {
         super(fields);
-        this.values = supplier.get();
+        this.compare = (Comparable<Object>) compareSupplier.get();
     }
+
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         From from = getRoot(root);
         String field = getProperty();
-        return from.get(field).in(values);
+        return doToPredicate(from, cb, field, compare);
     }
+
+
+    /**
+     * 获取单个predicate
+     */
+    protected abstract Predicate doToPredicate(From root, CriteriaBuilder cb, String field,  Comparable<Object> compare);
 }

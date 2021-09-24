@@ -29,7 +29,9 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 abstract class AbstractSpecification<T> implements Specification<T>, Serializable {
     public static final String DELIMITER = ".";
@@ -61,6 +63,7 @@ abstract class AbstractSpecification<T> implements Specification<T>, Serializabl
         this.properties = fields.stream().map(Field::getName).toArray(String[]::new);
     }
 
+
     public String getProperty() {
         return properties[properties.length - 1];
     }
@@ -78,4 +81,20 @@ abstract class AbstractSpecification<T> implements Specification<T>, Serializabl
         }
         return from;
     }
+
+    protected Object[] toObjects(Supplier<Object>... suppliers) {
+        if (suppliers != null) {
+            Object[] tmps = new Object[suppliers.length];
+            for (int i = 0; i < suppliers.length; i++) {
+                tmps[i] = suppliers[i].get();
+            }
+            return tmps;
+        }
+        return null;
+    }
+
+    protected Object toObjects(Supplier<Object> supplier) {
+        return supplier != null ? supplier.get() : null;
+    }
+
 }

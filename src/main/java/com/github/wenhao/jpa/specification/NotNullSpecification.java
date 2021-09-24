@@ -23,45 +23,18 @@ package com.github.wenhao.jpa.specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.From;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.function.Supplier;
 
-public class EqualSpecification<T> extends ValuesSpecification<T> {
+public class NotNullSpecification<T> extends NullSpecification<T> {
 
-
-    public EqualSpecification(String property, Object... values) {
-        super(property, values);
-    }
-
-    public EqualSpecification(Field field, Object... values) {
-        super(field, values);
-    }
-
-    public EqualSpecification(List<Field> fields, Object... values) {
-        super(fields, values);
-    }
-
-    public EqualSpecification(String property, Supplier<Object>... suppliers) {
-        super(property, suppliers);
-    }
-
-    public EqualSpecification(Field field, Supplier<Object>... suppliers) {
-        super(field, suppliers);
-    }
-
-    public EqualSpecification(List<Field> fields, Supplier<Object>... suppliers) {
-        super(fields, suppliers);
+    public NotNullSpecification(String property) {
+        super(property);
     }
 
     @Override
-    protected Predicate doToPredicate(From root, CriteriaBuilder cb, Object value, String field) {
-        return value == null ? cb.isNull(root.get(field)) : cb.equal(root.get(field), value);
+    public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+        return super.toPredicate(root, query, cb).not();
     }
-
-
 }
 

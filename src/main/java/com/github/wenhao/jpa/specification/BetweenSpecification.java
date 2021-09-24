@@ -33,6 +33,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.function.Supplier;
 
 
 public class BetweenSpecification<T> extends AbstractSpecification<T> {
@@ -55,6 +56,24 @@ public class BetweenSpecification<T> extends AbstractSpecification<T> {
         super(fields);
         this.lower = (Comparable<Object>) lower;
         this.upper = (Comparable<Object>) upper;
+    }
+
+    public BetweenSpecification(String property, Supplier<Object> lowerSupplier, Supplier<Object> upperSupplier) {
+        super(property);
+        this.lower = (Comparable<Object>) lowerSupplier.get();
+        this.upper = (Comparable<Object>) upperSupplier.get();
+    }
+
+    public BetweenSpecification(Field field, Supplier<Object> lowerSupplier, Supplier<Object> upperSupplier) {
+        super(field);
+        this.lower = (Comparable<Object>) lowerSupplier.get();
+        this.upper = (Comparable<Object>) upperSupplier.get();
+    }
+
+    public BetweenSpecification(List<Field> fields, Supplier<Object> lowerSupplier, Supplier<Object> upperSupplier) {
+        super(fields);
+        this.lower = (Comparable<Object>) lowerSupplier.get();
+        this.upper = (Comparable<Object>) upperSupplier.get();
     }
 
     @Override

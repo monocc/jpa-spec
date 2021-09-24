@@ -21,6 +21,8 @@
  */
 package com.github.wenhao.jpa.specification;
 
+import lombok.NonNull;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
@@ -28,36 +30,37 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class NotLikeSpecification<T> extends AbstractSpecification<T> {
-    private final String[] patterns;
+public class NotLikeSpecification<T> extends LikeSpecification<T> {
 
-    public NotLikeSpecification(String property, String... patterns) {
-        super(property);
-        this.patterns = patterns;
+
+    public NotLikeSpecification(String property, @NonNull String... patterns) {
+        super(property, patterns);
     }
 
-    public NotLikeSpecification(Field field, String... patterns) {
-        super(field);
-        this.patterns = patterns;
+    public NotLikeSpecification(Field field, @NonNull String... patterns) {
+        super(field, patterns);
     }
 
-    public NotLikeSpecification(List<Field> fields, String... patterns) {
-        super(fields);
-        this.patterns = patterns;
+    public NotLikeSpecification(List<Field> fields, @NonNull String... patterns) {
+        super(fields, patterns);
+    }
+
+    public NotLikeSpecification(String property, @NonNull Supplier<String>... suppliers) {
+        super(property, suppliers);
+    }
+
+    public NotLikeSpecification(Field field, @NonNull Supplier<String>... suppliers) {
+        super(field, suppliers);
+    }
+
+    public NotLikeSpecification(List<Field> fields, @NonNull Supplier<String>... suppliers) {
+        super(fields, suppliers);
     }
 
     @Override
-    public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        From from = getRoot(root);
-        String field = getProperty();
-        if (patterns.length == 1) {
-            return cb.like(from.get(field), patterns[0]).not();
-        }
-        Predicate[] predicates = new Predicate[patterns.length];
-        for (int i = 0; i < patterns.length; i++) {
-            predicates[i] = cb.like(from.get(field), patterns[i]).not();
-        }
-        return cb.or(predicates);
+    protected Predicate doToPredicate(From root, CriteriaBuilder cb, Object value, String field) {
+        return super.doToPredicate(root, cb, value, field).not();
     }
 }

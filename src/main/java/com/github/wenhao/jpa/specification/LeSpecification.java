@@ -22,36 +22,41 @@
 package com.github.wenhao.jpa.specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class LeSpecification<T> extends AbstractSpecification<T> {
+public class LeSpecification<T> extends CompareSpecification<T> {
 
-    private final transient Comparable<Object> compare;
 
-    public LeSpecification(String property, Comparable<? extends Object> compare) {
-        super(property);
-        this.compare = (Comparable<Object>) compare;
+    public LeSpecification(String property, Comparable<?> compare) {
+        super(property, compare);
     }
 
-    public LeSpecification(Field field, Comparable<? extends Object> compare) {
-        super(field);
-        this.compare = (Comparable<Object>) compare;
+    public LeSpecification(Field field, Comparable<?> compare) {
+        super(field, compare);
     }
 
-    public LeSpecification(List<Field> fields, Comparable<? extends Object> compare) {
-        super(fields);
-        this.compare = (Comparable<Object>) compare;
+    public LeSpecification(List<Field> fields, Comparable<?> compare) {
+        super(fields, compare);
+    }
+
+    public LeSpecification(String property, Supplier<Comparable<?>> compareSupplier) {
+        super(property, compareSupplier);
+    }
+
+    public LeSpecification(Field field, Supplier<Comparable<?>> compareSupplier) {
+        super(field, compareSupplier);
+    }
+
+    public LeSpecification(List<Field> fields, Supplier<Comparable<?>> compareSupplier) {
+        super(fields, compareSupplier);
     }
 
     @Override
-    public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        From from = getRoot(root);
-        String field = getProperty();
-        return cb.lessThanOrEqualTo(from.get(field), compare);
+    protected Predicate doToPredicate(From root, CriteriaBuilder cb, String field, Comparable<Object> compare) {
+        return cb.lessThanOrEqualTo(root.get(field), compare);
     }
 }

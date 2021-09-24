@@ -28,6 +28,8 @@ import com.github.wenhao.jpa.repository.PersonRepository;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -83,8 +85,9 @@ public class EqualTest {
 
         // when
         Specification<Person> specification = Specifications.<Person>and()
-                .eq("company", (Object) null)
-                .eq("nickName", null)
+                .lambda()
+                .eq(StringUtils.isNotBlank("222"), Person::getName, () -> "222")
+                .eq(Person::getNickName, null)
                 .build();
 
         List<Person> persons = personRepository.findAll(specification);

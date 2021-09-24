@@ -21,44 +21,21 @@
  */
 package com.github.wenhao.jpa.specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Supplier;
+import javax.persistence.criteria.*;
 
-public class NotInSpecification<T> extends InSpecification<T> {
+public class NullSpecification<T> extends AbstractSpecification<T> {
 
-    public NotInSpecification(String property, Collection<?> values) {
-        super(property, values);
+
+    public NullSpecification(String property) {
+        super(property);
     }
 
-    public NotInSpecification(Field field, Collection<?> values) {
-        super(field, values);
-    }
-
-    public NotInSpecification(List<Field> fields, Collection<?> values) {
-        super(fields, values);
-    }
-
-    public NotInSpecification(String property, Supplier<Collection<?>> supplier) {
-        super(property, supplier);
-    }
-
-    public NotInSpecification(Field field, Supplier<Collection<?>> supplier) {
-        super(field, supplier);
-    }
-
-    public NotInSpecification(List<Field> fields, Supplier<Collection<?>> supplier) {
-        super(fields, supplier);
-    }
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        return super.toPredicate(root, query, cb).not();
+        From from = getRoot(root);
+        String field = getProperty();
+        return cb.isNull(from.get(field));
     }
 }
+

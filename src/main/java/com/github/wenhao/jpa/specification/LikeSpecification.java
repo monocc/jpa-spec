@@ -21,43 +21,43 @@
  */
 package com.github.wenhao.jpa.specification;
 
+import lombok.NonNull;
+
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class LikeSpecification<T> extends AbstractSpecification<T> {
-    private final String[] patterns;
+public class LikeSpecification<T> extends ValuesSpecification<T> {
 
     public LikeSpecification(String property, String... patterns) {
-        super(property);
-        this.patterns = patterns;
+        super(property, patterns);
     }
 
     public LikeSpecification(Field field, String... patterns) {
-        super(field);
-        this.patterns = patterns;
+        super(field, patterns);
     }
 
     public LikeSpecification(List<Field> fields, String... patterns) {
-        super(fields);
-        this.patterns = patterns;
+        super(fields, patterns);
+    }
+
+    public LikeSpecification(String property, Supplier<String>... suppliers) {
+        super(property, suppliers);
+    }
+
+    public LikeSpecification(Field field, Supplier<String>... suppliers) {
+        super(field, suppliers);
+    }
+
+    public LikeSpecification(List<Field> fields, Supplier<String>... suppliers) {
+        super(fields, suppliers);
     }
 
     @Override
-    public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        From from = getRoot(root);
-        String field = getProperty();
-        if (patterns.length == 1) {
-            return cb.like(from.get(field), patterns[0]);
-        }
-        Predicate[] predicates = new Predicate[patterns.length];
-        for (int i = 0; i < patterns.length; i++) {
-            predicates[i] = cb.like(from.get(field), patterns[i]);
-        }
-        return cb.or(predicates);
+    protected Predicate doToPredicate(From root, CriteriaBuilder cb, Object value, String field) {
+        return cb.like(root.get(field), (String) value);
     }
 }
