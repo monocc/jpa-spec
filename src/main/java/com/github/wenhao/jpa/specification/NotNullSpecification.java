@@ -25,11 +25,29 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.lang.reflect.Field;
+import java.util.List;
 
 public class NotNullSpecification<T> extends NullSpecification<T> {
 
     public NotNullSpecification(String property) {
         super(property);
+    }
+
+    public NotNullSpecification(String[] properties) {
+        super(properties);
+    }
+
+    public NotNullSpecification(String property, String delimiter) {
+        super(property, delimiter);
+    }
+
+    public NotNullSpecification(Field field) {
+        super(field);
+    }
+
+    public NotNullSpecification(List<Field> fields) {
+        super(fields);
     }
 
     @Override

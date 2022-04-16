@@ -22,14 +22,30 @@
 package com.github.wenhao.jpa.specification;
 
 import javax.persistence.criteria.*;
+import java.lang.reflect.Field;
+import java.util.List;
 
 public class NullSpecification<T> extends AbstractSpecification<T> {
-
 
     public NullSpecification(String property) {
         super(property);
     }
 
+    public NullSpecification(String[] properties) {
+        super(properties);
+    }
+
+    public NullSpecification(String property, String delimiter) {
+        super(property, delimiter);
+    }
+
+    public NullSpecification(Field field) {
+        super(field);
+    }
+
+    public NullSpecification(List<Field> fields) {
+        super(fields);
+    }
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {

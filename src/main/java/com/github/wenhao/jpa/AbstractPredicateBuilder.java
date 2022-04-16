@@ -9,6 +9,7 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import static javax.persistence.criteria.Predicate.BooleanOperator.OR;
 
@@ -41,6 +42,12 @@ public class AbstractPredicateBuilder<T> {
         return (R) this;
     }
 
+    public <R extends AbstractPredicateBuilder<T>> R predicate(boolean condition, Supplier<Specification> supplier) {
+        if (condition) {
+            this.specifications.add(supplier.get());
+        }
+        return (R) this;
+    }
 
     public Specification<T> build() {
         return (Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
