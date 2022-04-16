@@ -1,5 +1,6 @@
 package com.github.wenhao.lambda;
 
+import com.github.wenhao.jpa.Sorts;
 import com.github.wenhao.jpa.model.Address;
 import com.github.wenhao.jpa.model.IdCard;
 import com.github.wenhao.jpa.model.Person;
@@ -15,5 +16,9 @@ public class CascadeFieldTest {
     public void with() {
         final CascadeField<Person, Set<Address>> with = CascadeField.of(Person::getIdCard).with(IdCard::getPerson).with(Person::getAddresses);
         System.out.println(with.getCascades());
+    }
+
+    public void test1() {
+        Sorts.<Person>builder().lambda().asc(true, Person::getNickName).build();
     }
 }

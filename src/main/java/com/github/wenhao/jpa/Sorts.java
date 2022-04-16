@@ -43,8 +43,8 @@ public final class Sorts {
     private Sorts() {
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static <T> Builder<T> builder() {
+        return new Builder<>();
     }
 
 
@@ -64,61 +64,61 @@ public final class Sorts {
         }
     }
 
-    public static final class Builder extends AbstractBuilder {
+    public static final class Builder<T> extends AbstractBuilder {
         public Builder() {
             super(new ArrayList<>());
         }
 
-        public Builder asc(String property) {
+        public Builder<T> asc(String property) {
             return asc(true, property);
         }
 
-        public Builder desc(String property) {
+        public Builder<T> desc(String property) {
             return desc(true, property);
         }
 
-        public Builder asc(boolean condition, String property) {
+        public Builder<T> asc(boolean condition, String property) {
             if (condition) {
                 super.getOrders().add(new Order(ASC, property));
             }
             return this;
         }
 
-        public Builder desc(boolean condition, String property) {
+        public Builder<T> desc(boolean condition, String property) {
             if (condition) {
                 super.getOrders().add(new Order(DESC, property));
             }
             return this;
         }
 
-        public LambdaBuilder lambda() {
-            return new LambdaBuilder(this);
+        public LambdaBuilder<T> lambda() {
+            return new LambdaBuilder<>(this);
         }
     }
 
 
-    public static final class LambdaBuilder extends AbstractBuilder {
+    public static final class LambdaBuilder<T> extends AbstractBuilder {
 
         public LambdaBuilder(AbstractBuilder builder) {
            super(builder.orders);
         }
 
-        public <T, R> LambdaBuilder asc(SerializableFunction<T, R> getterFunc) {
+        public <R> LambdaBuilder<T> asc(SerializableFunction<T, R> getterFunc) {
             return asc(true, getterFunc);
         }
 
-        public <T, R> LambdaBuilder desc(SerializableFunction<T, R> getterFunc) {
+        public <R> LambdaBuilder<T> desc(SerializableFunction<T, R> getterFunc) {
             return desc(true, getterFunc);
         }
 
-        public <T, R> LambdaBuilder asc(boolean condition, SerializableFunction<T, R> getterFunc) {
+        public <R> LambdaBuilder<T> asc(boolean condition, SerializableFunction<T, R> getterFunc) {
             if (condition) {
                 super.getOrders().add(new Order(ASC, LambdaUtils.getField(getterFunc).getName()));
             }
             return this;
         }
 
-        public <T, R> LambdaBuilder desc(boolean condition, SerializableFunction<T, R> getterFunc) {
+        public <R> LambdaBuilder<T> desc(boolean condition, SerializableFunction<T, R> getterFunc) {
             if (condition) {
                 super.getOrders().add(new Order(DESC, LambdaUtils.getField(getterFunc).getName()));
             }

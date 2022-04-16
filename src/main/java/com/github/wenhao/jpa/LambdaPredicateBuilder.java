@@ -21,17 +21,7 @@
  */
 package com.github.wenhao.jpa;
 
-import com.github.wenhao.jpa.specification.BetweenSpecification;
-import com.github.wenhao.jpa.specification.EqualSpecification;
-import com.github.wenhao.jpa.specification.GeSpecification;
-import com.github.wenhao.jpa.specification.GtSpecification;
-import com.github.wenhao.jpa.specification.InSpecification;
-import com.github.wenhao.jpa.specification.LeSpecification;
-import com.github.wenhao.jpa.specification.LikeSpecification;
-import com.github.wenhao.jpa.specification.LtSpecification;
-import com.github.wenhao.jpa.specification.NotEqualSpecification;
-import com.github.wenhao.jpa.specification.NotInSpecification;
-import com.github.wenhao.jpa.specification.NotLikeSpecification;
+import com.github.wenhao.jpa.specification.*;
 
 import com.github.wenhao.lambda.CascadeField;
 import com.github.wenhao.lambda.LambdaUtils;
@@ -184,6 +174,23 @@ public class LambdaPredicateBuilder<T> extends AbstractPredicateBuilder<T> {
         return this.predicate(condition, new NotInSpecification<T>(LambdaUtils.getField(getterFunc), collectionSupplier));
     }
 
+    public <R> LambdaPredicateBuilder<T> isNull(SerializableFunction<T, R> getterFunc) {
+        return this.isNull(true, getterFunc);
+    }
+
+    public <R> LambdaPredicateBuilder<T> isNull(boolean condition, SerializableFunction<T, R> getterFunc) {
+        return this.predicate(condition, new NullSpecification(LambdaUtils.getField(getterFunc)));
+    }
+
+    public <R> LambdaPredicateBuilder<T> isNotNull(SerializableFunction<T, R> getterFunc) {
+        return this.isNotNull(true, getterFunc);
+    }
+
+    public <R> LambdaPredicateBuilder<T> isNotNull(boolean condition, SerializableFunction<T, R> getterFunc) {
+        return this.predicate(condition, new NotNullSpecification(LambdaUtils.getField(getterFunc)));
+    }
+
+
     // -------------------------------
     // setter method
     // -------------------------------
@@ -318,7 +325,21 @@ public class LambdaPredicateBuilder<T> extends AbstractPredicateBuilder<T> {
     public <U> LambdaPredicateBuilder<T> notIn(boolean condition, SerializableBiConsumer<T, U> setterFunc, Supplier<Collection<?>> collectionSupplier) {
         return this.predicate(condition, new NotInSpecification<T>(LambdaUtils.getField(setterFunc), collectionSupplier));
     }
+    public <U> LambdaPredicateBuilder<T> isNull(SerializableBiConsumer<T, U> setterFunc) {
+        return this.isNull(true, setterFunc);
+    }
 
+    public <U> LambdaPredicateBuilder<T> isNull(boolean condition, SerializableBiConsumer<T, U> setterFunc) {
+        return this.predicate(condition, new NullSpecification(LambdaUtils.getField(setterFunc)));
+    }
+
+    public <U> LambdaPredicateBuilder<T> isNotNull(SerializableBiConsumer<T, U> setterFunc) {
+        return this.isNotNull(true, setterFunc);
+    }
+
+    public <U> LambdaPredicateBuilder<T> isNotNull(boolean condition, SerializableBiConsumer<T, U> setterFunc) {
+        return this.predicate(condition, new NotNullSpecification(LambdaUtils.getField(setterFunc)));
+    }
 
     // -------------------------------
     // cascade
@@ -453,5 +474,21 @@ public class LambdaPredicateBuilder<T> extends AbstractPredicateBuilder<T> {
 
     public <U> LambdaPredicateBuilder<T> notIn(boolean condition, CascadeField<T, U> cascade, Supplier<Collection<?>> collectionSupplier) {
         return this.predicate(condition, new NotInSpecification<T>(cascade.getFields(), collectionSupplier));
+    }
+
+    public <U> LambdaPredicateBuilder<T> isNull(CascadeField<T, U> cascade) {
+        return this.isNull(true, cascade);
+    }
+
+    public <U> LambdaPredicateBuilder<T> isNull(boolean condition, CascadeField<T, U> cascade) {
+        return this.predicate(condition, new NullSpecification(cascade.getFields()));
+    }
+
+    public <U> LambdaPredicateBuilder<T> isNotNull(CascadeField<T, U> cascade) {
+        return this.isNotNull(true, cascade);
+    }
+
+    public <U> LambdaPredicateBuilder<T> isNotNull(boolean condition, CascadeField<T, U> cascade) {
+        return this.predicate(condition, new NotNullSpecification(cascade.getFields()));
     }
 }
