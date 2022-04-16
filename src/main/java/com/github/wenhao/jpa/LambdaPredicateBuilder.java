@@ -190,21 +190,6 @@ public class LambdaPredicateBuilder<T> extends AbstractPredicateBuilder<T> {
         return this.predicate(condition, () -> new NotInSpecification<T>(LambdaUtils.getField(getterFunc), collectionSupplier));
     }
 
-    public <R> LambdaPredicateBuilder<T> isNull(SerializableFunction<T, R> getterFunc) {
-        return this.isNull(true, getterFunc);
-    }
-
-    public <R> LambdaPredicateBuilder<T> isNull(boolean condition, SerializableFunction<T, R> getterFunc) {
-        return this.predicate(condition, () -> new NullSpecification(LambdaUtils.getField(getterFunc)));
-    }
-
-    public <R> LambdaPredicateBuilder<T> isNotNull(SerializableFunction<T, R> getterFunc) {
-        return this.isNotNull(true, getterFunc);
-    }
-
-    public <R> LambdaPredicateBuilder<T> isNotNull(boolean condition, SerializableFunction<T, R> getterFunc) {
-        return this.predicate(condition, () -> new NotNullSpecification(LambdaUtils.getField(getterFunc)));
-    }
 
 
     // -------------------------------
@@ -357,21 +342,7 @@ public class LambdaPredicateBuilder<T> extends AbstractPredicateBuilder<T> {
     public <U> LambdaPredicateBuilder<T> notIn(boolean condition, SerializableBiConsumer<T, U> setterFunc, Supplier<Collection<?>> collectionSupplier) {
         return this.predicate(condition, () -> new NotInSpecification<T>(LambdaUtils.getField(setterFunc), collectionSupplier));
     }
-    public <U> LambdaPredicateBuilder<T> isNull(SerializableBiConsumer<T, U> setterFunc) {
-        return this.isNull(true, setterFunc);
-    }
 
-    public <U> LambdaPredicateBuilder<T> isNull(boolean condition, SerializableBiConsumer<T, U> setterFunc) {
-        return this.predicate(condition, () -> new NullSpecification(LambdaUtils.getField(setterFunc)));
-    }
-
-    public <U> LambdaPredicateBuilder<T> isNotNull(SerializableBiConsumer<T, U> setterFunc) {
-        return this.isNotNull(true, setterFunc);
-    }
-
-    public <U> LambdaPredicateBuilder<T> isNotNull(boolean condition, SerializableBiConsumer<T, U> setterFunc) {
-        return this.predicate(condition, () -> new NotNullSpecification(LambdaUtils.getField(setterFunc)));
-    }
 
     // -------------------------------
     // cascade
@@ -524,19 +495,4 @@ public class LambdaPredicateBuilder<T> extends AbstractPredicateBuilder<T> {
         return this.predicate(condition, () -> new NotInSpecification<T>(cascade.getFields(), collectionSupplier));
     }
 
-    public <U> LambdaPredicateBuilder<T> isNull(CascadeField<T, U> cascade) {
-        return this.isNull(true, cascade);
-    }
-
-    public <U> LambdaPredicateBuilder<T> isNull(boolean condition, CascadeField<T, U> cascade) {
-        return this.predicate(condition, () -> new NullSpecification(cascade.getFields()));
-    }
-
-    public <U> LambdaPredicateBuilder<T> isNotNull(CascadeField<T, U> cascade) {
-        return this.isNotNull(true, cascade);
-    }
-
-    public <U> LambdaPredicateBuilder<T> isNotNull(boolean condition, CascadeField<T, U> cascade) {
-        return this.predicate(condition, () -> new NotNullSpecification(cascade.getFields()));
-    }
 }
