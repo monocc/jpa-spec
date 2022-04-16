@@ -1,4 +1,4 @@
-package com.github.wenhao.util;
+package com.github.wenhao;
 
 import java.util.ArrayList;
 import java.util.List;
